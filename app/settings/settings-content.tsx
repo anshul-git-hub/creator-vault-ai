@@ -16,7 +16,7 @@ import {
   GraduationCap,
   Play,
   TrendingUp,
-  LayoutList,
+  LayoutGrid,
   ArrowLeft
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -306,7 +306,7 @@ export default function SettingsContent({
                   {[
                     { label: 'Profession', val: profile.profession, icon: GraduationCap },
                     { label: 'Creator Type', val: profile.creator_type, icon: Play },
-                    { label: 'Working Style', val: profile.working_style, icon: LayoutList },
+                    { label: 'Working Style', val: profile.working_style, icon: LayoutGrid },
                     { label: 'Primary Goal', val: profile.goals, icon: TrendingUp }
                   ].map((item, idx) => {
                     const Icon = item.icon;
