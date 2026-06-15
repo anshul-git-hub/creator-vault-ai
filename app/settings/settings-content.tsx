@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { 
   User, 
@@ -14,10 +15,13 @@ import {
   FolderHeart,
   GraduationCap,
   Play,
-  TrendingUp
+  TrendingUp,
+  LayoutList,
+  ArrowLeft
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import PageHeader from '@/components/ui/page-header';
 
 interface ProfileRow {
   id: string;
@@ -58,8 +62,6 @@ export default function SettingsContent({
   const [goals, setGoals] = useState(initialProfile?.goals || 'Grow Audience');
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
 
-  const [googleConnected, setGoogleConnected] = useState(false);
-  const [connectingGoogle, setConnectingGoogle] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [isLoggedOut, setIsLoggedOut] = useState(false);
 
@@ -94,18 +96,6 @@ export default function SettingsContent({
       toast.error(`Error: ${errMsg}`);
     } finally {
       setSavingProfile(false);
-    }
-  };
-
-  const handleToggleGoogle = () => {
-    if (googleConnected) {
-      setGoogleConnected(false);
-    } else {
-      setConnectingGoogle(true);
-      setTimeout(() => {
-        setGoogleConnected(true);
-        setConnectingGoogle(false);
-      }, 1200); // Premium loading simulation
     }
   };
 
@@ -198,10 +188,13 @@ export default function SettingsContent({
       className="space-y-8 max-w-3xl mx-auto"
     >
       {/* Title */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-black text-white tracking-tight">Account Settings</h1>
-        <p className="text-zinc-400 text-sm">Configure profiles, link external tools, and manage data.</p>
-      </div>
+      <PageHeader 
+        title="Account Settings"
+        description="Configure profiles, link external tools, and manage data."
+        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings' }]}
+        backLink="/dashboard"
+        backLabel="Back to Dashboard"
+      />
 
       <div className="space-y-6">
         {/* Profile Card */}
@@ -391,30 +384,22 @@ export default function SettingsContent({
                 <Globe className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <p className="text-xs font-bold text-white">Google Drive Integration</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-bold text-white">Google Drive Integration</p>
+                  <span className="px-1.5 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/20 text-[9px] font-bold text-purple-400 uppercase tracking-wider">Upcoming Integration</span>
+                </div>
                 <p className="text-[10px] text-zinc-500 mt-1 leading-relaxed">
                   Automatically sync scripts and thumbnail renders from your Google Drive files.
                 </p>
               </div>
             </div>
 
-            <button
-              onClick={handleToggleGoogle}
-              disabled={connectingGoogle}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                googleConnected 
-                  ? 'bg-purple-600/10 border border-purple-500/30 text-purple-300 hover:bg-purple-600/20' 
-                  : 'bg-white hover:bg-zinc-100 text-zinc-950 font-bold border border-transparent'
-              }`}
+            <div 
+              title="Google Drive sync will be available in a future update."
+              className="px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 bg-white/5 text-zinc-500 border border-white/5 cursor-not-allowed"
             >
-              {connectingGoogle ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : googleConnected ? (
-                'Connected'
-              ) : (
-                'Connect'
-              )}
-            </button>
+              Coming Soon
+            </div>
           </div>
         </div>
 

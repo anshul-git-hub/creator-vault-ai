@@ -19,11 +19,13 @@ import {
   Brain,
   Video,
   FileCheck,
-  HardDrive
+  HardDrive,
+  ArrowLeft
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import EmptyState from '@/components/ui/empty-state';
+import PageHeader from '@/components/ui/page-header';
 import FilePreviewModal, { PreviewFile } from '@/components/ui/file-preview-modal';
 
 interface FileRow {
@@ -211,10 +213,13 @@ export default function SearchContent({ initialFiles, userId }: SearchContentPro
         className="space-y-8"
       >
       {/* Title */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-black text-white tracking-tight">Vault Search</h1>
-        <p className="text-zinc-400 text-sm">Query your second brain using keywords and structured filters.</p>
-      </div>
+      <PageHeader 
+        title="Vault Search"
+        description="Query your second brain using keywords and structured filters."
+        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Search' }]}
+        backLink="/dashboard"
+        backLabel="Back to Dashboard"
+      />
 
       {/* Control bar */}
       <div className="rounded-2xl border border-white/5 bg-[#131316]/50 p-6 space-y-6">

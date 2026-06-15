@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import ErrorBoundary from '@/components/ui/error-boundary';
 import { getCreatorCategories, getCategoryIcon } from '@/lib/categories';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { useActivity } from '@/lib/activity';
 import EmptyState from '@/components/ui/empty-state';
+import PremiumLoadingScreen from '@/components/ui/premium-loading-screen';
+import PageHeader from '@/components/ui/page-header';
 import FilePreviewModal, { PreviewFile } from '@/components/ui/file-preview-modal';
 import { 
   FileText, 
@@ -64,6 +66,17 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
   const { activities, logActivity } = useActivity();
   const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+    const hasSeen = sessionStorage.getItem('creatorVault_hasSeenLoading');
+    if (!hasSeen) {
+      setShowLoadingScreen(true);
+      sessionStorage.setItem('creatorVault_hasSeenLoading', 'true');
+    }
+  }, []);
 
   const handlePreview = async (file: FileRow) => {
     try {
@@ -197,16 +210,47 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
     return `${days}d ago`;
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } }
+  };
+
+  // Prevent hydration mismatch by not rendering anything until mounted
+  if (!hasMounted) return null;
+
   return (
     <ErrorBoundary>
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="space-y-8"
-      >
+      <AnimatePresence mode="wait">
+        {showLoadingScreen && (
+          <PremiumLoadingScreen 
+            key="loading-screen"
+            userName={userFullName || userEmail?.split('@')[0] || 'Creator'}
+            creatorType={profile?.creator_type || 'Creator'}
+            onComplete={() => setShowLoadingScreen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {!showLoadingScreen && (
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="space-y-8"
+        >
       {/* Welcome Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-900/40 via-indigo-900/20 to-black border border-purple-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4 overflow-hidden relative">
+      <motion.div variants={itemVariants} className="p-6 rounded-2xl bg-gradient-to-br from-purple-900/40 via-indigo-900/20 to-black border border-purple-500/20 flex flex-col md:flex-row md:items-center justify-between gap-4 overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
         <div>
@@ -225,34 +269,36 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
             </span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Your Second Brain</h1>
-          <p className="text-zinc-400 text-sm">Manage and retrieve all your creator references and assets.</p>
-        </div>
-        <div className="flex gap-3">
-          <Link
-            href="/search"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-semibold text-zinc-300 transition-colors"
-          >
-            <Search className="w-4 h-4" />
-            Search
-          </Link>
-          <Link
-            href="/upload"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-semibold text-white transition-colors shadow-lg shadow-purple-950/20"
-          >
-            <Plus className="w-4 h-4" />
-            Upload File
-          </Link>
-        </div>
-      </div>
+      <motion.div variants={itemVariants}>
+        <PageHeader 
+          title="Your Second Brain"
+          description="Manage and retrieve all your creator references and assets."
+          actions={
+            <div className="flex gap-3">
+              <Link
+                href="/search"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-semibold text-zinc-300 transition-colors"
+              >
+                <Search className="w-4 h-4" />
+                Search
+              </Link>
+              <Link
+                href="/upload"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-sm font-semibold text-white transition-colors shadow-lg shadow-purple-950/20"
+              >
+                <Plus className="w-4 h-4" />
+                Upload File
+              </Link>
+            </div>
+          }
+        />
+      </motion.div>
 
       {/* Analytics Summary Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Storage Card */}
         <div className="p-6 rounded-2xl bg-[#131316]/60 border border-white/5 relative overflow-hidden flex flex-col justify-between h-40">
           <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl pointer-events-none" />
@@ -340,10 +386,10 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Clickable Categories Grid */}
-      <div className="space-y-3">
+      <motion.div variants={itemVariants} className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
             <Database className="w-3.5 h-3.5 text-purple-400" />
@@ -390,9 +436,9 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Panel - Uploads Table */}
         <div className="lg:col-span-2 rounded-2xl border border-white/5 bg-[#131316]/50 p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -554,8 +600,9 @@ export default function DashboardContent({ initialFiles, userId, profile, userEm
             </p>
           </div>
         </div>
-      </div>
       </motion.div>
+      </motion.div>
+      )}
       <FilePreviewModal 
         file={previewFile}
         isOpen={isPreviewOpen}

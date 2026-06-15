@@ -24,7 +24,8 @@ import {
   ArrowRight,
   ArrowLeft,
   Loader2,
-  Lock
+  Lock,
+  LogOut
 } from 'lucide-react';
 
 interface OnboardingContentProps {
@@ -187,13 +188,27 @@ export default function OnboardingContent({ userId }: OnboardingContentProps) {
             <div className="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
               <GraduationCap className="w-4.5 h-4.5 text-purple-400" />
             </div>
-            <span className="font-bold text-sm tracking-tight text-white">
+            <span className="font-bold text-sm tracking-tight text-white hidden sm:inline">
               CreatorVault<span className="text-purple-400">Onboarding</span>
             </span>
           </div>
 
-          <div className="text-xs text-zinc-500 font-semibold tracking-wider uppercase">
-            Step {currentStepIndex + 1} of {STEPS.length}
+          <div className="flex items-center gap-4">
+            <div className="text-xs text-zinc-500 font-semibold tracking-wider uppercase hidden sm:block">
+              Step {currentStepIndex + 1} of {STEPS.length}
+            </div>
+            <div className="w-px h-4 bg-white/10 hidden sm:block" />
+            <button
+              onClick={async () => {
+                await supabase.auth.signOut();
+                router.push('/');
+                router.refresh();
+              }}
+              className="flex items-center gap-1.5 text-xs font-bold text-zinc-400 hover:text-white transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-purple-500 rounded-md py-1 px-2"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              Sign Out
+            </button>
           </div>
         </div>
       </header>

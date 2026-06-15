@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { 
   UploadCloud, 
@@ -11,12 +12,14 @@ import {
   File,
   ArrowRight,
   Sparkles,
-  Link2
+  Link2,
+  ArrowLeft
 } from 'lucide-react';
 import { getCreatorCategories } from '@/lib/categories';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { useActivity } from '@/lib/activity';
+import PageHeader from '@/components/ui/page-header';
 
 interface UploadFormProps {
   userId: string;
@@ -195,10 +198,13 @@ export default function UploadForm({ userId, creatorType }: UploadFormProps) {
 
   return (
     <form onSubmit={handleUpload} className="max-w-2xl mx-auto space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-black text-white tracking-tight">Upload Asset</h1>
-        <p className="text-zinc-400 text-sm">Add a new reference, script, or asset to your secure vault.</p>
-      </div>
+      <PageHeader 
+        title="Upload Asset"
+        description="Add a new reference, script, or asset to your secure vault."
+        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Upload' }]}
+        backLink="/dashboard"
+        backLabel="Back to Dashboard"
+      />
 
       {success && (
         <div className="p-4.5 bg-emerald-950/20 border border-emerald-500/20 text-emerald-400 rounded-2xl flex items-start gap-3 text-sm animate-in fade-in zoom-in-95">

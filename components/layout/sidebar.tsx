@@ -92,7 +92,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all outline-none focus-visible:ring-2 focus-visible:ring-purple-500 ${
                     isActive
                       ? 'bg-purple-600/15 border border-purple-500/25 text-purple-300 shadow-inner'
                       : 'text-zinc-400 hover:bg-white/5 border border-transparent hover:text-white'
@@ -111,7 +111,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
           <Link 
             href="/settings"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-2 group cursor-pointer"
+            className="flex items-center gap-3 px-2 py-1.5 rounded-lg group cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-purple-500 transition-all"
           >
             <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-white/5 flex items-center justify-center text-zinc-400 group-hover:bg-purple-600/10 group-hover:text-purple-400 group-hover:border-purple-500/20 transition-all">
               <User className="w-4 h-4" />
@@ -126,7 +126,7 @@ export default function Sidebar({ userEmail }: SidebarProps) {
 
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-red-500/10 hover:text-red-400 transition-colors border border-transparent hover:border-red-500/15 cursor-pointer"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-bold text-zinc-400 hover:bg-red-500/10 hover:text-red-400 transition-colors border border-transparent hover:border-red-500/15 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-500"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

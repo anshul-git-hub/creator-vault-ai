@@ -15,13 +15,15 @@ import {
   HardDrive,
   Download,
   Trash2,
-  Calendar
+  Calendar,
+  ArrowLeft
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getCreatorCategories, getCategoryIcon } from '@/lib/categories';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import EmptyState from '@/components/ui/empty-state';
+import PageHeader from '@/components/ui/page-header';
 import FilePreviewModal, { PreviewFile } from '@/components/ui/file-preview-modal';
 
 interface FileRow {
@@ -153,16 +155,19 @@ export default function CategoriesContent({ initialFiles, userId, creatorType }:
       className="space-y-8"
     >
       {/* Title */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-black text-white tracking-tight">Categories Dashboard</h1>
-        <p className="text-zinc-400 text-sm">Visualize your creator knowledge asset distribution and storage weight.</p>
-      </div>
+      <PageHeader 
+        title="Categories Dashboard"
+        description="Visualize your creator knowledge asset distribution and storage weight."
+        breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Categories' }]}
+        backLink="/dashboard"
+        backLabel="Back to Dashboard"
+      />
 
       {/* Analytics grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Side: Stats & distribution charts */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="rounded-2xl border border-white/5 bg-[#131316]/50 p-6 space-y-6">
+        <div className="lg:col-span-1 space-y-8">
+          <div className="rounded-3xl border border-white/5 bg-[#131316]/50 p-7 space-y-7">
             <div className="flex items-center gap-2 border-b border-white/5 pb-4">
               <PieChart className="w-4.5 h-4.5 text-purple-400" />
               <h2 className="text-xs font-bold text-white uppercase tracking-wider">Asset Distribution</h2>
@@ -208,8 +213,8 @@ export default function CategoriesContent({ initialFiles, userId, creatorType }:
         </div>
 
         {/* Right Side: Folders View */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-white/5 bg-[#131316]/50 p-6 space-y-6">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="rounded-3xl border border-white/5 bg-[#131316]/50 p-7 space-y-7">
             <div className="flex items-center gap-2 border-b border-white/5 pb-4">
               <FolderOpen className="w-4.5 h-4.5 text-purple-400" />
               <h2 className="text-xs font-bold text-white uppercase tracking-wider">Explore Vault Folders</h2>

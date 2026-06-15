@@ -16,6 +16,7 @@ import {
   Eye,
   Volume2
 } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 
 interface FileRow {
   id: string;
@@ -313,16 +314,16 @@ export default function FileDetailsContent({ file, userId }: FileDetailsContentP
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Back navigation */}
-      <div>
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Vault
-        </button>
-      </div>
+      <PageHeader 
+        title="Asset Details"
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/dashboard' }, 
+          { label: 'Vault', href: '/dashboard' },
+          { label: file.file_name }
+        ]}
+        backLink="/dashboard"
+        backLabel="Back to Vault"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Title, metadata, download actions & preview panel (7 cols) */}
